@@ -4,15 +4,19 @@ import Combine
 
 struct CalendarEventsBlockView: View {
     @ObservedObject var userPreferences = UserPreferences.shared
-    
+
     @State private var events: [EKEvent] = []
-    
+    @State private var currentTime = Date()
+
+    // Timer to refresh strikethrough status every 2 hours
+    private let refreshTimer = Timer.publish(every: 7200, on: .main, in: .common).autoconnect()
+
     var body: some View {
         Group {
             if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(events, id: \.eventIdentifier) { event in
-                        CalendarEventRow(event: event)
+                        CalendarEventRow(event: event, currentTime: currentTime)
                     }
                 }
                 .padding(8)
@@ -24,6 +28,7 @@ struct CalendarEventsBlockView: View {
         }
         .onAppear {
             loadEvents()
+            currentTime = Date()
         }
         .onChange(of: userPreferences.eventCalendarIdentifiersFilter) { _ in
             loadEvents()
@@ -31,12 +36,16 @@ struct CalendarEventsBlockView: View {
         .onChange(of: userPreferences.remindersMenuBarOpeningEvent) { _ in
             // Reload when app window opens
             loadEvents()
+            currentTime = Date()
         }
         .onReceive(NotificationCenter.default.publisher(for: .EKEventStoreChanged)) { _ in
             loadEvents()
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
             loadEvents()
+        }
+        .onReceive(refreshTimer) { _ in
+            currentTime = Date()
         }
     }
     
@@ -60,8 +69,13 @@ struct CalendarEventsBlockView: View {
 
 struct CalendarEventRow: View {
     let event: EKEvent
+    let currentTime: Date
     @State private var isHovered = false
-    
+
+    private var hasPassed: Bool {
+        event.startDate < currentTime
+    }
+
     var body: some View {
         HStack(spacing: 4) {
             if event.isAllDay {
@@ -70,10 +84,12 @@ struct CalendarEventRow: View {
                     .frame(width: 6, height: 6)
             } else {
                 Text(timeString)
+                    .strikethrough(hasPassed)
                     .foregroundColor(Color(event.calendar.color))
             }
-            
+
             Text(event.title)
+                .strikethrough(hasPassed)
                 .lineLimit(1)
                 .truncationMode(.tail)
         }
@@ -90,7 +106,7 @@ struct CalendarEventRow: View {
             CalendarEventsService.shared.openEventInCalendar(event)
         }
     }
-    
+
     private var timeString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
