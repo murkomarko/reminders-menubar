@@ -18,61 +18,71 @@ struct FormNewReminderView: View {
         let _ = CalendarParser.updateShared(with: remindersData.calendars)
         
         Form {
-            HStack(alignment: .center) {
-                newReminderTextFieldView()
-                .padding(.vertical, 4)
-                .padding(.horizontal, 8)
-                .background(Color.rmbColor(for: .textFieldBackground, and: colorSchemeContrast))
-                .cornerRadius(8)
-                .textFieldStyle(PlainTextFieldStyle())
-                .modifier(ContrastBorderOverlay())
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center) {
+                    newReminderTextFieldView()
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(Color.rmbColor(for: .textFieldBackground, and: colorSchemeContrast))
+                    .cornerRadius(8)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .modifier(ContrastBorderOverlay())
 
-                Menu {
-                    ForEach(remindersData.calendars, id: \.calendarIdentifier) { calendar in
+                    Menu {
+                        ForEach(remindersData.calendars, id: \.calendarIdentifier) { calendar in
+                            Button(action: {
+                                remindersData.calendarForSaving = calendar
+                                let rmbCalendarIdentifier = rmbReminder.textCalendarResult.calendar?.calendarIdentifier
+                                if calendar.calendarIdentifier != rmbCalendarIdentifier {
+                                    // NOTE: Clear textCalendarResult because user overwrote the calendar for saving.
+                                    rmbReminder.textCalendarResult = CalendarParser.TextCalendarResult()
+                                }
+                            }) {
+                                let isSelected = calendarForSaving?.calendarIdentifier == calendar.calendarIdentifier
+                                SelectableView(title: calendar.title, isSelected: isSelected, color: Color(calendar.color))
+                            }
+                        }
+
+                        Divider()
+
                         Button(action: {
-                            remindersData.calendarForSaving = calendar
-                            let rmbCalendarIdentifier = rmbReminder.textCalendarResult.calendar?.calendarIdentifier
-                            if calendar.calendarIdentifier != rmbCalendarIdentifier {
-                                // NOTE: Clear textCalendarResult because user overwrote the calendar for saving.
-                                rmbReminder.textCalendarResult = CalendarParser.TextCalendarResult()
+                            userPreferences.autoSuggestToday.toggle()
+                            if rmbReminder.title.isEmpty {
+                                rmbReminder = newRmbReminder()
                             }
                         }) {
-                            let isSelected = calendarForSaving?.calendarIdentifier == calendar.calendarIdentifier
-                            SelectableView(title: calendar.title, isSelected: isSelected, color: Color(calendar.color))
+                            let isSelected = userPreferences.autoSuggestToday
+                            SelectableView(
+                                title: rmbLocalized(.newReminderAutoSuggestTodayOption),
+                                isSelected: isSelected
+                            )
                         }
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: {
-                        userPreferences.autoSuggestToday.toggle()
-                        if rmbReminder.title.isEmpty {
-                            rmbReminder = newRmbReminder()
+
+                        Button(action: { userPreferences.removeParsedDateFromTitle.toggle() }) {
+                            let isSelected = userPreferences.removeParsedDateFromTitle
+                            SelectableView(
+                                title: rmbLocalized(.newReminderRemoveParsedDateOption),
+                                isSelected: isSelected
+                            )
                         }
-                    }) {
-                        let isSelected = userPreferences.autoSuggestToday
-                        SelectableView(
-                            title: rmbLocalized(.newReminderAutoSuggestTodayOption),
-                            isSelected: isSelected
-                        )
+                    } label: {
+                        Circle()
+                            .fill(Color(calendarForSaving?.color ?? .white))
+                            .frame(width: 24, height: 24)
                     }
-                    
-                    Button(action: { userPreferences.removeParsedDateFromTitle.toggle() }) {
-                        let isSelected = userPreferences.removeParsedDateFromTitle
-                        SelectableView(
-                            title: rmbLocalized(.newReminderRemoveParsedDateOption),
-                            isSelected: isSelected
-                        )
-                    }
-                } label: {
-                    Circle()
-                        .fill(Color(calendarForSaving?.color ?? .white))
-                        .frame(width: 24, height: 24)
+                    .buttonStyle(.plain)
+                    .frame(width: 24, height: 24)
+                    .padding(.leading, 4)
+                    .help(rmbLocalized(.newReminderCalendarSelectionToSaveHelp))
                 }
-                .buttonStyle(.plain)
-                .frame(width: 24, height: 24)
-                .padding(.leading, 4)
-                .help(rmbLocalized(.newReminderCalendarSelectionToSaveHelp))
+
+                if isShowingInfoOptions {
+                    NewReminderInfoOptionsView(
+                        date: $rmbReminder.date,
+                        hasDueDate: $rmbReminder.hasDueDate,
+                        hasTime: $rmbReminder.hasTime
+                    )
+                }
             }
         }
         .padding(6)
@@ -93,52 +103,42 @@ struct FormNewReminderView: View {
 
     @ViewBuilder
     func newReminderTextFieldView() -> some View {
-        VStack(alignment: .leading) {
-            ZStack(alignment: .topTrailing) {
-                RmbHighlightedTextField(
-                    placeholder: rmbLocalized(.newReminderTextFielPlaceholder),
-                    text: $rmbReminder.title,
-                    highlightedTexts: rmbReminder.highlightedTexts,
-                    textContainerDynamicHeight: $textFieldDynamicHeight,
-                    focusTrigger: $textFieldFocusTrigger,
-                )
-                .onSubmit {
-                    createNewReminder()
-                }
-                .autoComplete(
-                    isInitialCharValid: CalendarParser.isInitialCharValid(_:),
-                    suggestions: CalendarParser.autoCompleteSuggestions(_:)
-                )
-                .onChange(of: userPreferences.remindersMenuBarOpeningEvent) { _ in
-                    textFieldFocusTrigger = UUID()
-                }
-                .frame(height: textFieldDynamicHeight)
-
-                Button(action: {
-                    createNewReminder()
-                }) {
-                    Image(systemName: "return")
-                        .font(.system(size: 9, weight: .semibold))
-                        .foregroundColor(.primary.opacity(0.7))
-                        .frame(width: 20, height: 20)
-                        .background(
-                            Circle()
-                                .fill(Color.gray.opacity(0.25))
-                        )
-                }
-                .buttonStyle(.plain)
-                .disabled(rmbReminder.title.isEmpty)
-                .padding(.trailing, 2)
-                .help("Submit reminder")
+        ZStack(alignment: .topTrailing) {
+            RmbHighlightedTextField(
+                placeholder: rmbLocalized(.newReminderTextFielPlaceholder),
+                text: $rmbReminder.title,
+                highlightedTexts: rmbReminder.highlightedTexts,
+                textContainerDynamicHeight: $textFieldDynamicHeight,
+                focusTrigger: $textFieldFocusTrigger
+            )
+            .onSubmit {
+                createNewReminder()
             }
-
-            if isShowingInfoOptions {
-                NewReminderInfoOptionsView(
-                    date: $rmbReminder.date,
-                    hasDueDate: $rmbReminder.hasDueDate,
-                    hasTime: $rmbReminder.hasTime
-                )
+            .autoComplete(
+                isInitialCharValid: CalendarParser.isInitialCharValid(_:),
+                suggestions: CalendarParser.autoCompleteSuggestions(_:)
+            )
+            .onChange(of: userPreferences.remindersMenuBarOpeningEvent) { _ in
+                textFieldFocusTrigger = UUID()
             }
+            .frame(height: textFieldDynamicHeight)
+
+            Button(action: {
+                createNewReminder()
+            }) {
+                Image(systemName: "return")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundColor(.primary.opacity(0.7))
+                    .frame(width: 20, height: 20)
+                    .background(
+                        Circle()
+                            .fill(Color.gray.opacity(0.25))
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(rmbReminder.title.isEmpty)
+            .padding(.trailing, 2)
+            .help("Submit reminder")
         }
     }
     
