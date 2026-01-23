@@ -18,7 +18,7 @@ struct FormNewReminderView: View {
         let _ = CalendarParser.updateShared(with: remindersData.calendars)
         
         Form {
-            HStack(alignment: .top) {
+            HStack(alignment: .center) {
                 newReminderTextFieldView()
                 .padding(.vertical, 4)
                 .padding(.horizontal, 8)
@@ -26,7 +26,7 @@ struct FormNewReminderView: View {
                 .cornerRadius(8)
                 .textFieldStyle(PlainTextFieldStyle())
                 .modifier(ContrastBorderOverlay())
-                
+
                 Menu {
                     ForEach(remindersData.calendars, id: \.calendarIdentifier) { calendar in
                         Button(action: {
@@ -119,17 +119,16 @@ struct FormNewReminderView: View {
                 }) {
                     Image(systemName: "return")
                         .font(.system(size: 9, weight: .semibold))
-                        .foregroundColor(.primary.opacity(0.5))
+                        .foregroundColor(.primary.opacity(0.7))
                         .frame(width: 20, height: 20)
                         .background(
                             Circle()
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(Color.gray.opacity(0.25))
                         )
                 }
                 .buttonStyle(.plain)
                 .disabled(rmbReminder.title.isEmpty)
                 .padding(.trailing, 2)
-                .padding(.top, 2)
                 .help("Submit reminder")
             }
 

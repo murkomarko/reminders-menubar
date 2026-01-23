@@ -42,6 +42,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         configurePanel()
         configureMenuBarButton()
         configureKeyboardShortcut()
+
+        // Auto-open the panel on launch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.showPanelAndFocusNewReminder()
+        }
     }
 
     private func configurePanel() {
