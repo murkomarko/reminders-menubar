@@ -95,6 +95,8 @@ struct SettingsBarGearMenu: View {
         
         menuBarCounterMenu()
         
+        focusTimerMenu()
+        
         preferredLanguageMenu()
         
         Divider()
@@ -178,6 +180,41 @@ struct SettingsBarGearMenu: View {
             }
         } label: {
             Text(rmbLocalized(.preferredLanguageMenu))
+        }
+    }
+    
+    func focusTimerMenu() -> some View {
+        Menu {
+            Button(action: {
+                userPreferences.focusTimerEnabled.toggle()
+            }) {
+                SelectableView(
+                    title: rmbLocalized(.focusTimerEnableOption),
+                    isSelected: userPreferences.focusTimerEnabled
+                )
+            }
+            
+            Divider()
+            
+            Text(rmbLocalized(.focusTimerNudgeIntervalMenu))
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            ForEach([10, 15, 30, 0], id: \.self) { interval in
+                Button(action: {
+                    userPreferences.focusNudgeIntervalMinutes = interval
+                }) {
+                    let title = interval == 0
+                        ? rmbLocalized(.focusTimerNudgeOffOption)
+                        : "\(interval) min"
+                    SelectableView(
+                        title: title,
+                        isSelected: userPreferences.focusNudgeIntervalMinutes == interval
+                    )
+                }
+            }
+        } label: {
+            Text(rmbLocalized(.focusTimerMenu))
         }
     }
 }

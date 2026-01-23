@@ -4,6 +4,11 @@ import EventKit
 struct ReminderCompleteButton: View {
     var reminderItem: ReminderItem
     @State private var isAnimating = false
+    @ObservedObject var focusTimerService = FocusTimerService.shared
+
+    private var isFocused: Bool {
+        focusTimerService.isFocused(reminderId: reminderItem.id)
+    }
 
     var body: some View {
         Button(action: {
@@ -12,6 +17,11 @@ struct ReminderCompleteButton: View {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                // Stop focus timer if this reminder was being focused
+                if isFocused {
+                    focusTimerService.stopFocus()
+                }
+                
                 reminderItem.reminder.isCompleted.toggle()
                 RemindersService.shared.save(reminder: reminderItem.reminder)
                 if reminderItem.reminder.isCompleted {
@@ -23,14 +33,23 @@ struct ReminderCompleteButton: View {
                 isAnimating = false
             }
         }) {
-            Image(systemName: isAnimating ? "checkmark.circle.fill" : (reminderItem.reminder.isCompleted ? "largecircle.fill.circle" : "circle"))
+            Image(systemName: buttonIcon)
                 .resizable()
-                .frame(width: 16, height: 16)
-                .padding(.top, 1)
+                .frame(width: 14, height: 14)
                 .foregroundColor(Color(reminderItem.reminder.calendar.color))
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var buttonIcon: String {
+        if isAnimating {
+            return "checkmark.circle.fill"
+        } else if reminderItem.reminder.isCompleted {
+            return "largecircle.fill.circle"
+        } else {
+            return "circle"
+        }
     }
 }
 

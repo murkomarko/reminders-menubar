@@ -15,15 +15,22 @@ struct CalendarEventsBlockView: View {
         Group {
             if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
+                    Text(rmbLocalized(.calendarEventsTitle))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 4)
+                        .padding(.bottom, 2)
+                    
                     ForEach(events, id: \.eventIdentifier) { event in
                         CalendarEventRow(event: event, currentTime: currentTime)
                     }
                 }
-                .padding(8)
-                .background(Color.primary.opacity(0.05))
+                .frame(maxWidth: .infinity)
+                .padding(6)
+                .background(Color.primary.opacity(0.15))
                 .cornerRadius(6)
-                .padding(.horizontal, 4)
-                .padding(.bottom, 4)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 2)
             }
         }
         .onAppear {
@@ -94,7 +101,7 @@ struct CalendarEventRow: View {
                 .truncationMode(.tail)
         }
         .font(.system(size: 9))
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .font(.system(size: 9))
         .padding(.vertical, 1)
         .padding(.horizontal, 4)
         .background(isHovered ? Color.primary.opacity(0.08) : Color.clear)

@@ -17,7 +17,7 @@ struct FormNewReminderView: View {
         // swiftlint:disable:next redundant_discardable_let
         let _ = CalendarParser.updateShared(with: remindersData.calendars)
         
-        Form {
+        VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .center) {
                     newReminderTextFieldView()
@@ -66,9 +66,7 @@ struct FormNewReminderView: View {
                             )
                         }
                     } label: {
-                        Circle()
-                            .fill(Color(calendarForSaving?.color ?? .white))
-                            .frame(width: 24, height: 24)
+                        RemindersListIcon(color: Color(calendarForSaving?.color ?? .white), size: 22)
                     }
                     .buttonStyle(.plain)
                     .frame(width: 24, height: 24)
@@ -123,22 +121,24 @@ struct FormNewReminderView: View {
             }
             .frame(height: textFieldDynamicHeight)
 
-            Button(action: {
-                createNewReminder()
-            }) {
-                Image(systemName: "return")
-                    .font(.system(size: 9, weight: .semibold))
-                    .foregroundColor(.primary.opacity(0.7))
-                    .frame(width: 20, height: 20)
-                    .background(
-                        Circle()
-                            .fill(Color.gray.opacity(0.25))
-                    )
+            if !rmbReminder.title.isEmpty {
+                Button(action: {
+                    createNewReminder()
+                }) {
+                    Image(systemName: "return")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(.primary.opacity(0.7))
+                        .frame(width: 20, height: 20)
+                        .background(
+                            Circle()
+                                .fill(Color.gray.opacity(0.25))
+                        )
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 2)
+                .help("Submit reminder")
+                .transition(.opacity)
             }
-            .buttonStyle(.plain)
-            .disabled(rmbReminder.title.isEmpty)
-            .padding(.trailing, 2)
-            .help("Submit reminder")
         }
     }
     
@@ -222,6 +222,44 @@ struct ContrastBorderOverlay: ViewModifier {
                     .foregroundColor(Color.rmbColor(for: .borderContrast, and: colorSchemeContrast))
                 : nil
             )
+    }
+}
+
+struct RemindersListIcon: View {
+    let color: Color
+    var size: CGFloat = 24
+    
+    var body: some View {
+        ZStack {
+            // Main colored circle with gradient for 3D effect
+            Circle()
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            color.opacity(0.8),
+                            color
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: color.opacity(0.4), radius: 2, x: 0, y: 1)
+            
+            // Inner "ring" glare effect to mimic the Apple style
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            .white.opacity(0.3),
+                            .clear
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 1.5
+                )
+        }
+        .frame(width: size, height: size)
     }
 }
 

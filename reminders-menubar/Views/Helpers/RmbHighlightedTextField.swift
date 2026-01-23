@@ -53,6 +53,10 @@ struct RmbHighlightedTextField: NSViewRepresentable {
         textView.backgroundColor = .clear
         textView.font = textFont
         textView.delegate = context.coordinator
+        
+        scrollView.drawsBackground = false
+        scrollView.hasVerticalScroller = false
+        scrollView.hasHorizontalScroller = false
 
         return scrollView
     }
@@ -267,7 +271,7 @@ private class PlaceholderNSTextView: NSTextView {
                 .foregroundColor: NSColor.secondaryLabelColor
             ]
 
-            placeholder.draw(in: rect.insetBy(dx: 4, dy: 0), withAttributes: attributes)
+            placeholder.draw(in: rect.insetBy(dx: 4, dy: 0).offsetBy(dx: 0, dy: 2), withAttributes: attributes)
         }
         super.draw(rect)
     }

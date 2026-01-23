@@ -18,6 +18,8 @@ private enum PreferencesKeys {
     static let filterMenuBarCountByCalendar = "filterMenuBarCountByCalendar"
     static let preferredLanguage = "preferredLanguage"
     static let windowFrame = "windowFrame"
+    static let focusTimerEnabled = "focusTimerEnabled"
+    static let focusNudgeIntervalMinutes = "focusNudgeIntervalMinutes"
 }
 
 class UserPreferences: ObservableObject {
@@ -92,14 +94,9 @@ class UserPreferences: ObservableObject {
         }
     }
     
-    @Published var upcomingRemindersInterval: ReminderInterval = {
-        guard let intervalData = defaults.data(forKey: PreferencesKeys.upcomingRemindersInterval),
-              let interval = try? JSONDecoder().decode(ReminderInterval.self, from: intervalData) else {
-            return .today
-        }
-        return interval
-    }() {
+    @Published var upcomingRemindersInterval: ReminderInterval = .today {
         didSet {
+            // We force .today, but if we ever wanted to persist:
             let intervalData = try? JSONEncoder().encode(upcomingRemindersInterval)
             UserPreferences.defaults.set(intervalData, forKey: PreferencesKeys.upcomingRemindersInterval)
         }
@@ -217,6 +214,31 @@ class UserPreferences: ObservableObject {
                 "height": frame.size.height
             ]
             UserPreferences.defaults.set(dict, forKey: PreferencesKeys.windowFrame)
+        }
+    }
+    
+    // MARK: - Focus Timer Settings
+    
+    @Published var focusTimerEnabled: Bool = {
+        return defaults.boolWithDefaultValueTrue(forKey: PreferencesKeys.focusTimerEnabled)
+    }() {
+        didSet {
+            UserPreferences.defaults.set(focusTimerEnabled, forKey: PreferencesKeys.focusTimerEnabled)
+            if !focusTimerEnabled {
+                // Stop any active focus session when disabled
+                Task { @MainActor in
+                    FocusTimerService.shared.stopFocus()
+                }
+            }
+        }
+    }
+    
+    @Published var focusNudgeIntervalMinutes: Int = {
+        let value = defaults.integer(forKey: PreferencesKeys.focusNudgeIntervalMinutes)
+        return value == 0 ? 10 : value  // Default to 10 minutes
+    }() {
+        didSet {
+            UserPreferences.defaults.set(focusNudgeIntervalMinutes, forKey: PreferencesKeys.focusNudgeIntervalMinutes)
         }
     }
 }

@@ -89,6 +89,13 @@ enum RemindersMenuBarLocalizedKeys: String {
     case reminderRecurrenceMonthlyLabel
     case reminderRecurrenceYearlyLabel
     case calendarEventsHeader
+    case calendarEventsTitle
+    case focusTimerMenu
+    case focusTimerEnableOption
+    case focusTimerNudgeIntervalMenu
+    case focusTimerNudgeOffOption
+    case focusTimerStartHelp
+    case focusTimerStopHelp
 }
 
 struct ReminderMenuBarLocale {

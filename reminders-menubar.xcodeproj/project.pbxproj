@@ -14,8 +14,6 @@
 		710980D22600419F001F69B2 /* UpcomingRemindersContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710980D12600419F001F69B2 /* UpcomingRemindersContent.swift */; };
 		7115461324C0ADCB007781E2 /* ReminderItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7115461224C0ADCB007781E2 /* ReminderItemView.swift */; };
 		7115461924C0C280007781E2 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7115461824C0C280007781E2 /* RemindersService.swift */; };
-		A1CALENDARSERVICE /* CalendarEventsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CALENDARSERVICEFILE /* CalendarEventsService.swift */; };
-		A1CALENDARBLOCK /* CalendarEventsBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CALENDARBLOCKFILE /* CalendarEventsBlockView.swift */; };
 		7119C2F025D85B75002C8013 /* SelectableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7119C2EF25D85B75002C8013 /* SelectableView.swift */; };
 		712C32B424BF939100AC75E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712C32B324BF939100AC75E2 /* AppDelegate.swift */; };
 		712C32B624BF939100AC75E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712C32B524BF939100AC75E2 /* ContentView.swift */; };
@@ -82,6 +80,10 @@
 		71F9726A25981EDF00D0A118 /* NSTableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F9726925981EDF00D0A118 /* NSTableView+Extensions.swift */; };
 		96A54A6B29A3ADB70060403F /* DateParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A54A6A29A3ADB70060403F /* DateParser.swift */; };
 		96A54A6D29A3B1A90060403F /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A54A6C29A3B1A90060403F /* String+Extensions.swift */; };
+		A1CALENDARBLOCK /* CalendarEventsBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CALENDARBLOCKFILE /* CalendarEventsBlockView.swift */; };
+		A1CALENDARSERVICE /* CalendarEventsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CALENDARSERVICEFILE /* CalendarEventsService.swift */; };
+		A1FOCUSTIMERBADGE /* FocusTimerBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FOCUSTIMERBADGEFILE /* FocusTimerBadge.swift */; };
+		A1FOCUSTIMERSERVICE /* FocusTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FOCUSTIMERSERVICEFILE /* FocusTimerService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,8 +109,6 @@
 		710980D12600419F001F69B2 /* UpcomingRemindersContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingRemindersContent.swift; sourceTree = "<group>"; };
 		7115461224C0ADCB007781E2 /* ReminderItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderItemView.swift; sourceTree = "<group>"; };
 		7115461824C0C280007781E2 /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
-		A1CALENDARSERVICEFILE /* CalendarEventsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventsService.swift; sourceTree = "<group>"; };
-		A1CALENDARBLOCKFILE /* CalendarEventsBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventsBlockView.swift; sourceTree = "<group>"; };
 		7119C2EF25D85B75002C8013 /* SelectableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableView.swift; sourceTree = "<group>"; };
 		712C32B024BF939100AC75E2 /* Reminders MenuBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Reminders MenuBar.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		712C32B324BF939100AC75E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -176,6 +176,10 @@
 		71F9726925981EDF00D0A118 /* NSTableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTableView+Extensions.swift"; sourceTree = "<group>"; };
 		96A54A6A29A3ADB70060403F /* DateParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateParser.swift; sourceTree = "<group>"; };
 		96A54A6C29A3B1A90060403F /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		A1CALENDARBLOCKFILE /* CalendarEventsBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventsBlockView.swift; sourceTree = "<group>"; };
+		A1CALENDARSERVICEFILE /* CalendarEventsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventsService.swift; sourceTree = "<group>"; };
+		A1FOCUSTIMERBADGEFILE /* FocusTimerBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTimerBadge.swift; sourceTree = "<group>"; };
+		A1FOCUSTIMERSERVICEFILE /* FocusTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTimerService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +240,7 @@
 				71A4163625CED8FE00CA4F81 /* GithubService.swift */,
 				71F301F9259FB5CF00CDD81E /* UserPreferences.swift */,
 				715B4DD428D56FE5008C6683 /* KeyboardShortcutService.swift */,
+				A1FOCUSTIMERSERVICEFILE /* FocusTimerService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -385,6 +390,7 @@
 				71F93A622E03B6DA00D5C5BC /* ReminderDateDescriptionView.swift */,
 				71F93A642E03B93100D5C5BC /* ReminderExternalLinksView.swift */,
 				71A658392908B0DD006F3A50 /* ReminderEditPopover.swift */,
+				A1FOCUSTIMERBADGEFILE /* FocusTimerBadge.swift */,
 			);
 			path = ReminderItemView;
 			sourceTree = "<group>";
@@ -459,7 +465,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2620;
 				ORGANIZATIONNAME = "Rafael Damasceno";
 				TargetAttributes = {
 					71059DA725CA5244001F3063 = {
@@ -584,6 +590,8 @@
 				7115461924C0C280007781E2 /* RemindersService.swift in Sources */,
 				A1CALENDARSERVICE /* CalendarEventsService.swift in Sources */,
 				A1CALENDARBLOCK /* CalendarEventsBlockView.swift in Sources */,
+				A1FOCUSTIMERSERVICE /* FocusTimerService.swift in Sources */,
+				A1FOCUSTIMERBADGE /* FocusTimerBadge.swift in Sources */,
 				715B4DD728D59BF2008C6683 /* SettingsBarFilterMenu.swift in Sources */,
 				71B6D1FB24C6511000E66EDB /* SettingsBarView.swift in Sources */,
 				712C836229E6635200BF6C24 /* RmbMenuBarCounterType.swift in Sources */,
@@ -755,6 +763,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -815,6 +824,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
@@ -831,8 +841,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"reminders-menubar/Preview Content\"";
 				DEVELOPMENT_TEAM = BW825A4LPW;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "reminders-menubar/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -860,8 +873,11 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"reminders-menubar/Preview Content\"";
 				DEVELOPMENT_TEAM = BW825A4LPW;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "reminders-menubar/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";

@@ -10,6 +10,7 @@ struct ContentView: View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 FormNewReminderView()
+                    .padding(.top, -10)
 
                 if userPreferences.atLeastOneFilterIsSelected {
                     List {
@@ -140,7 +141,7 @@ class ThinScroller: NSScroller {
     override func drawKnob() {
         let knobRect = rect(for: .knob).insetBy(dx: 2, dy: 0)
         let path = NSBezierPath(roundedRect: knobRect, xRadius: 3, yRadius: 3)
-        NSColor.gray.withAlphaComponent(0.5).setFill()
+        NSColor.gray.withAlphaComponent(0.3).setFill()
         path.fill()
     }
 }

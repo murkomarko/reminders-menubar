@@ -7,8 +7,6 @@ struct SettingsBarView: View {
             
             Spacer()
             
-            SettingsBarToggleButton()
-            
             Spacer()
             
             SettingsBarGearMenu()

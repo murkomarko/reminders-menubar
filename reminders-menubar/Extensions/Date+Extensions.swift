@@ -73,4 +73,17 @@ extension Date {
         }
         return Calendar.current.dateComponents(components, from: self)
     }
+    
+    func compactDateDescription(withTime: Bool) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = rmbCurrentLocale()
+        
+        if withTime {
+            formatter.dateFormat = "dd/MM HH:mm"
+        } else {
+            formatter.dateFormat = "dd/MM"
+        }
+        
+        return formatter.string(from: self)
+    }
 }

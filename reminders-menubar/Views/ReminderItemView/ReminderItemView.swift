@@ -12,6 +12,9 @@ struct ReminderItemView: View {
     @State private var isEditingTitle = false
 
     @State private var showingRemoveAlert = false
+    
+    @ObservedObject var focusTimerService = FocusTimerService.shared
+    @ObservedObject var userPreferences = UserPreferences.shared
 
     var body: some View {
         if reminderItem.reminder.calendar == nil {
@@ -25,70 +28,109 @@ struct ReminderItemView: View {
 
     @ViewBuilder
     func mainReminderItemView() -> some View {
-        HStack(alignment: .top) {
+        HStack(spacing: 3) {
             ReminderCompleteButton(reminderItem: reminderItem)
-
-            VStack(spacing: 4) {
-                HStack(spacing: 4) {
-                    if let prioritySystemImage = reminderItem.reminder.ekPriority.systemImage {
-                        Image(systemName: prioritySystemImage)
-                            .foregroundColor(Color(reminderItem.reminder.calendar.color))
+            
+            // Priority indicator
+            if let prioritySystemImage = reminderItem.reminder.ekPriority.systemImage {
+                Image(systemName: prioritySystemImage)
+                    .font(.system(size: 10))
+                    .foregroundColor(Color(reminderItem.reminder.calendar.color))
+            }
+            
+            // Overdue date (shown BEFORE title - uses fixedSize to never compress)
+            if reminderItem.reminder.isExpired, let date = reminderItem.reminder.dueDateComponents?.date {
+                Text(date.compactDateDescription(withTime: reminderItem.reminder.hasTime))
+                    .font(.system(size: 8, weight: .medium, design: .monospaced))
+                    .foregroundColor(.red)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .onTapGesture {
+                        openRemindersApp()
                     }
-                    Text(LocalizedStringKey(reminderItem.reminder.title.toDetectedLinkAttributedString()))
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .onTapGesture {
-                            isEditingTitle = true
-                            showingEditPopover = true
+            }
+            
+            // Title (truncates first when space is limited)
+            Text(LocalizedStringKey(reminderItem.reminder.title.toDetectedLinkAttributedString()))
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onTapGesture {
+                    openRemindersApp()
+                }
+            
+            // Timer badge (when focused, always visible)
+            if isCurrentlyFocused() {
+                FocusTimerBadge()
+                    .fixedSize()
+            }
+        }
+        .overlay(
+            Group {
+                if shouldShowEllipsisButton() {
+                    HStack(spacing: 4) {
+                        // List name badge (clickable - opens Apple Reminders to this list)
+                        Button(action: {
+                            openRemindersApp()
+                        }) {
+                            Text(reminderItem.reminder.calendar.title)
+                                .font(.system(size: 10))
+                                .foregroundColor(Color(reminderItem.reminder.calendar.color))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule()
+                                        .fill(Color(reminderItem.reminder.calendar.color).opacity(0.15))
+                                )
                         }
-
-                    ReminderEllipsisMenuView(
-                        showingEditPopover: $showingEditPopover,
-                        showingRemoveAlert: $showingRemoveAlert,
-                        reminder: reminderItem.reminder,
-                        reminderHasChildren: reminderItem.hasChildren
-                    )
-                    .frame(width: shouldShowEllipsisButton() ? nil : 0)
-                    .opacity(shouldShowEllipsisButton() ? 1 : 0)
-                    .popover(isPresented: $showingEditPopover, arrowEdge: .trailing) {
-                        ReminderEditPopover(
-                            isPresented: $showingEditPopover,
-                            focusOnTitle: $isEditingTitle,
+                        .buttonStyle(.plain)
+                        .fixedSize()
+                        
+                        // Focus timer button
+                        focusButton()
+                            .opacity(userPreferences.focusTimerEnabled ? 1 : 0)
+                        
+                        // Ellipsis menu
+                        ReminderEllipsisMenuView(
+                            showingEditPopover: $showingEditPopover,
+                            showingRemoveAlert: $showingRemoveAlert,
                             reminder: reminderItem.reminder,
                             reminderHasChildren: reminderItem.hasChildren
                         )
+                        .popover(isPresented: $showingEditPopover, arrowEdge: .trailing) {
+                            ReminderEditPopover(
+                                isPresented: $showingEditPopover,
+                                focusOnTitle: $isEditingTitle,
+                                reminder: reminderItem.reminder,
+                                reminderHasChildren: reminderItem.hasChildren
+                            )
+                        }
                     }
-                }
-                .alert(isPresented: $showingRemoveAlert) {
-                    removeReminderAlert()
-                }
-
-                if let dateDescription = reminderItem.reminder.relativeDateDescription {
-                    ReminderDateDescriptionView(
-                        dateDescription: dateDescription,
-                        isExpired: reminderItem.reminder.isExpired,
-                        hasRecurrenceRules: reminderItem.reminder.hasRecurrenceRules,
-                        recurrenceRules: reminderItem.reminder.recurrenceRules,
-                        calendarTitle: reminderItem.reminder.calendar.title,
-                        showCalendarTitleOnDueDate: showCalendarTitleOnDueDate
+                    .padding(.leading, 12) // Add padding to separate from potential text overlap
+                    .background(
+                        // Gradient fade from clear to background color to smooth text overlap
+                        LinearGradient(
+                            gradient: Gradient(stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: Color(NSColor.windowBackgroundColor).opacity(0.8), location: 0.1),
+                                .init(color: Color(NSColor.windowBackgroundColor), location: 0.4)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
                 }
-
-                if reminderItem.reminder.attachedUrl != nil || reminderItem.reminder.mailUrl != nil {
-                    ReminderExternalLinksView(
-                        attachedUrl: reminderItem.reminder.attachedUrl,
-                        mailUrl: reminderItem.reminder.mailUrl
-                    )
-                }
-
-                Divider()
-            }
-        }
+            },
+            alignment: .trailing
+        )
+        .padding(.vertical, 1) // Reduced vertical spacing between rows
         .onHover { isHovered in
             reminderItemIsHovered = isHovered
         }
         .padding(.leading, reminderItem.isChild ? 24 : 0)
+        .alert(isPresented: $showingRemoveAlert) {
+            removeReminderAlert()
+        }
 
         ForEach(reminderItem.childReminders.uncompleted) { reminderItem in
             ReminderItemView(reminderItem: reminderItem, isShowingCompleted: isShowingCompleted)
@@ -104,16 +146,65 @@ struct ReminderItemView: View {
     func shouldShowEllipsisButton() -> Bool {
         return reminderItemIsHovered || showingEditPopover
     }
+    
+    func shouldShowFocusButton() -> Bool {
+        return reminderItemIsHovered || isCurrentlyFocused()
+    }
+    
+    func isCurrentlyFocused() -> Bool {
+        return focusTimerService.isFocused(reminderId: reminderItem.id)
+    }
+    
+    @ViewBuilder
+    func focusButton() -> some View {
+        if isCurrentlyFocused() {
+            Button(action: {
+                focusTimerService.stopFocus()
+            }) {
+                Image(systemName: "stop.fill")
+                    .font(.system(size: 10))
+                    .foregroundColor(Color(reminderItem.reminder.calendar.color))
+            }
+            .buttonStyle(.plain)
+            .frame(width: 16, height: 16)
+            .help(rmbLocalized(.focusTimerStopHelp))
+        } else {
+            Button(action: {
+                focusTimerService.startFocus(for: reminderItem.reminder)
+            }) {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 10))
+                    .foregroundColor(Color(reminderItem.reminder.calendar.color))
+            }
+            .buttonStyle(.plain)
+            .frame(width: 16, height: 16)
+            .help(rmbLocalized(.focusTimerStartHelp))
+        }
+    }
 
     func removeReminderAlert() -> Alert {
         Alert(
             title: Text(rmbLocalized(.removeReminderAlertTitle)),
             message: Text(rmbLocalized(.removeReminderAlertMessage, arguments: reminderItem.reminder.title)),
             primaryButton: .destructive(Text(rmbLocalized(.removeReminderAlertConfirmButton)), action: {
+                // Stop focus timer if this reminder was focused
+                if isCurrentlyFocused() {
+                    focusTimerService.stopFocus()
+                }
                 RemindersService.shared.remove(reminder: reminderItem.reminder)
             }),
             secondaryButton: .cancel(Text(rmbLocalized(.removeReminderAlertCancelButton)))
         )
+    }
+    
+    func openRemindersApp() {
+        // Try to open using the known scheme
+        if let url = URL(string: "x-apple-reminderkit://") {
+            NSWorkspace.shared.open(url)
+        } else {
+            // Fallback: Launch by name (legacy but effective for system apps)
+            NSWorkspace.shared.launchApplication("Reminders")
+        }
     }
 }
 
