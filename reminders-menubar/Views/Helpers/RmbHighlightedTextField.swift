@@ -83,9 +83,13 @@ struct RmbHighlightedTextField: NSViewRepresentable {
         if let layoutManager = textView.layoutManager,
            let textContainer = textView.textContainer {
             let singleLineHeight = layoutManager.defaultLineHeight(for: textFont)
-            let maxHeight = singleLineHeight * CGFloat(maximumNumberOfLines)
-            let usedHeight = layoutManager.usedRect(for: textContainer).height
-            newHeight = max(singleLineHeight, min(usedHeight, maxHeight))
+            if textView.string.isEmpty {
+                newHeight = singleLineHeight
+            } else {
+                let maxHeight = singleLineHeight * CGFloat(maximumNumberOfLines)
+                let usedHeight = layoutManager.usedRect(for: textContainer).height
+                newHeight = max(singleLineHeight, min(usedHeight, maxHeight))
+            }
         }
 
         DispatchQueue.main.async {

@@ -71,7 +71,7 @@ struct FormNewReminderView: View {
                 }
                 .buttonStyle(.plain)
                 .frame(width: 24, height: 24)
-                .padding(8)
+                .padding(.leading, 4)
                 .help(rmbLocalized(.newReminderCalendarSelectionToSaveHelp))
             }
         }
@@ -119,7 +119,7 @@ struct FormNewReminderView: View {
                 }) {
                     Image(systemName: "return")
                         .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.gray)
                         .frame(width: 20, height: 20)
                         .background(
                             Circle()
@@ -128,8 +128,8 @@ struct FormNewReminderView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(rmbReminder.title.isEmpty)
-                .padding(.trailing, 4)
-                .padding(.top, 4)
+                .padding(.trailing, 2)
+                .padding(.top, 2)
                 .help("Submit reminder")
             }
 
