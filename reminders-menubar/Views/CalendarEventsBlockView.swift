@@ -73,7 +73,7 @@ struct CalendarEventRow: View {
     @State private var isHovered = false
 
     private var hasPassed: Bool {
-        event.startDate < currentTime
+        !event.isAllDay && event.startDate < currentTime
     }
 
     var body: some View {

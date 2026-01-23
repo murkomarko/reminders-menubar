@@ -10,7 +10,7 @@ struct FormNewReminderView: View {
     @State var isShowingInfoOptions = false
 
     @State var textFieldFocusTrigger = UUID()
-    @State var textFieldDynamicHeight: CGFloat = 0
+    @State var textFieldDynamicHeight: CGFloat = 17
 
     var body: some View {
         let calendarForSaving = getCalendarForSaving()
@@ -20,7 +20,7 @@ struct FormNewReminderView: View {
         Form {
             HStack(alignment: .top) {
                 newReminderTextFieldView()
-                .padding(.vertical, 8)
+                .padding(.vertical, 4)
                 .padding(.horizontal, 8)
                 .background(Color.rmbColor(for: .textFieldBackground, and: colorSchemeContrast))
                 .cornerRadius(8)
@@ -118,12 +118,12 @@ struct FormNewReminderView: View {
                     createNewReminder()
                 }) {
                     Image(systemName: "return")
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(.gray)
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundColor(.primary.opacity(0.5))
                         .frame(width: 20, height: 20)
                         .background(
                             Circle()
-                                .fill(Color.gray.opacity(0.15))
+                                .fill(Color.gray.opacity(0.2))
                         )
                 }
                 .buttonStyle(.plain)
